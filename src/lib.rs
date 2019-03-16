@@ -1,6 +1,8 @@
-use std::ptr;
+#![warn(missing_docs)]
 
-//TODO: box helper
+//! Helper extensions of standard containers that allow memcopy-less operation.
+
+use std::ptr;
 
 /// A typesafe helper that separates new value construction from
 /// vector growing, allowing LLVM to ideally construct the element in place.
@@ -10,6 +12,7 @@ pub struct Allocation<'a, T: 'a> {
 }
 
 impl<'a, T> Allocation<'a, T> {
+    /// Consumes self and writes the given value into the allocation.
     // writing is safe because alloc() ensured enough capacity
     // and `Allocation` holds a mutable borrow to prevent anyone else
     // from breaking this invariant.
@@ -25,11 +28,14 @@ impl<'a, T> Allocation<'a, T> {
 
 /// An entry into a vector, similar to `std::collections::hash_map::Entry`.
 pub enum VecEntry<'a, T: 'a> {
+    /// Entry has just been freshly allocated.
     Vacant(Allocation<'a, T>),
+    /// Existing entry.
     Occupied(&'a mut T),
 }
 
 impl<'a, T> VecEntry<'a, T> {
+    /// Sets the value for this entry.
     #[inline(always)]
     pub fn set(self, value: T) {
         match self {
