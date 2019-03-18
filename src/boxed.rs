@@ -1,8 +1,6 @@
 use std::{alloc, mem, ptr};
 
 
-const ALIGNMENT: usize = 4; //TODO
-
 /// A typesafe helper that stores the allocated pointer without the data initialized.
 pub struct BoxAllocation<T>(*mut T);
 
@@ -20,7 +18,7 @@ impl<T> BoxAllocation<T> {
 impl<T> Drop for BoxAllocation<T> {
     fn drop(&mut self) {
         if !self.0.is_null() {
-            let layout = alloc::Layout::from_size_align(mem::size_of::<T>(), ALIGNMENT).unwrap();
+            let layout = alloc::Layout::new::<T>();
             unsafe {
                 alloc::dealloc(self.0 as *mut u8, layout);
             }
@@ -37,7 +35,7 @@ pub trait BoxHelper<T> {
 
 impl<T> BoxHelper<T> for Box<T> {
     fn alloc() -> BoxAllocation<T> {
-        let layout = alloc::Layout::from_size_align(mem::size_of::<T>(), ALIGNMENT).unwrap();
+        let layout = alloc::Layout::new::<T>();
         BoxAllocation(unsafe {
             alloc::alloc(layout) as *mut T
         })
