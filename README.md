@@ -8,7 +8,7 @@ It aims to accelerate [WebRender](https://github.com/servo/webrender) and [gfx-r
 
 ## Background
 
-The `memcpy` instructions showed in profiles of WebRender running in Gecko. @jrmuizel built a tool called [memcpy-find](https://github.com/jrmuizel/memcpy-find) that analyzes LLVM IR and spews out the call stacks that end up producing `memcpy` instructions. We figured out a way to convince the compiler to eliminate the copies. This library attemts to make these ways available to Rust ecosystem, at least until the compiler gets smart enough ;)
+The `memcpy` instructions showed in profiles of WebRender running in Gecko. @jrmuizel built a tool called [memcpy-find](https://github.com/jrmuizel/memcpy-find) that analyzes LLVM IR and spews out the call stacks that end up producing `memcpy` instructions. We figured out a way to convince the compiler to eliminate the copies. This library attempts to make these ways available to Rust ecosystem, at least until the compiler gets smart enough ;)
 
 ## Here is a small example
 

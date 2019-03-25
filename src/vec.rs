@@ -43,9 +43,9 @@ impl<'a, T> VecEntry<'a, T> {
 
 /// Helper trait for a `Vec` type that allocates up-front.
 pub trait VecHelper<T> {
-    /// Growns the vector by a single entry, returning the allocation.
+    /// Grows the vector by a single entry, returning the allocation.
     fn alloc(&mut self) -> VecAllocation<T>;
-    /// Either returns an existing elemenet, or grows the vector by one.
+    /// Either returns an existing element, or grows the vector by one.
     /// Doesn't expect indices to be higher than the current length.
     fn entry(&mut self, index: usize) -> VecEntry<T>;
 }
