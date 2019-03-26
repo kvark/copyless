@@ -1,12 +1,15 @@
 use std::{alloc, mem, ptr};
 
-
 /// A typesafe helper that stores the allocated pointer without the data initialized.
 pub struct BoxAllocation<T>(*mut T);
 
 impl<T> BoxAllocation<T> {
     /// Consumes self and writes the given value into the allocation.
     pub fn init(mut self, value: T) -> Box<T> {
+        if mem::size_of::<T>() == 0 {
+            return Box::new(value);
+        }
+
         let ptr = mem::replace(&mut self.0, ptr::null_mut());
         unsafe {
             ptr::write(ptr, value);
@@ -35,6 +38,10 @@ pub trait BoxHelper<T> {
 
 impl<T> BoxHelper<T> for Box<T> {
     fn alloc() -> BoxAllocation<T> {
+        if mem::size_of::<T>() == 0 {
+            return BoxAllocation(ptr::null_mut());
+        }
+
         let layout = alloc::Layout::new::<T>();
         BoxAllocation(unsafe {
             alloc::alloc(layout) as *mut T
