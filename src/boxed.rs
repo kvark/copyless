@@ -48,3 +48,5 @@ impl<T> BoxHelper<T> for Box<T> {
         })
     }
 }
+
+//TODO: is it possible to construct a test case similar to one in `vec` module?

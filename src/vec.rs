@@ -73,3 +73,25 @@ impl<T> VecHelper<T> for Vec<T> {
         }
     }
 }
+
+/// Tests are only meaningful in Release
+#[cfg(not(debug_assertions))]
+#[test]
+fn test_zero_copy() {
+    union Foo {
+        small: u8,
+        big: [f32; 10],
+    }
+    let mut vec = vec![Foo { big: [1.0; 10] }];
+
+    // check that the new helper is not overwriting
+    vec.remove(0);
+    vec.alloc().init(Foo { small: 5 });
+    assert_eq!(unsafe { vec[0].big[1] }, 1.0);
+
+    // check that the regular push is overwriting
+    vec.remove(0);
+    vec.push(Foo { small: 5 });
+    //TODO: make the expected value to be concrete
+    assert_ne!(unsafe { vec[0].big[1] }, 1.0);
+}
