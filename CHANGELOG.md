@@ -1,5 +1,9 @@
 # Change Log
 
+## v0.1.3 (31-05-2019)
+  - fixed zero-sized box allocations
+  - fixed file permissions in the package
+
 ## v0.1.2 (19-03-2019)
   - fixed box alignment
 
