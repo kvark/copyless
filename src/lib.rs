@@ -2,8 +2,10 @@
 
 //! Helper extensions of standard containers that allow memcopy-less operation.
 
+pub use self::{
+    boxed::{BoxAllocation, BoxHelper},
+    vec::{VecAllocation, VecEntry, VecHelper},
+};
+
 mod boxed;
 mod vec;
-
-pub use boxed::{BoxAllocation, BoxHelper};
-pub use vec::{VecAllocation, VecEntry, VecHelper};
