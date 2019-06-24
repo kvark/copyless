@@ -1,5 +1,8 @@
 # Change Log
 
+## v0.1.4 (24-06-2019)
+  - `BoxHelper`: replaced nullable pointer with NonNull
+
 ## v0.1.3 (31-05-2019)
   - fixed zero-sized box allocations
   - fixed file permissions in the package

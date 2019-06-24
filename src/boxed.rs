@@ -1,17 +1,27 @@
-use std::{alloc, mem, ptr};
+use std::{
+    alloc, mem,
+    ptr::{self, NonNull},
+};
 
 /// A typesafe helper that stores the allocated pointer without the data initialized.
-pub struct BoxAllocation<T>(*mut T);
+pub struct BoxAllocation<T>(
+    // ptr cannot be null since it would mean the allocation failed.
+    // Note: covariance is acceptable since this eventually becomes a `Box<T>`,
+    // which is covariant too.
+    NonNull<T>,
+);
 
 impl<T> BoxAllocation<T> {
     /// Consumes self and writes the given value into the allocation.
-    pub fn init(mut self, value: T) -> Box<T> {
+    #[inline(always)] // if this does not get inlined then copying happens
+    pub fn init(self, value: T) -> Box<T> {
         if mem::size_of::<T>() == 0 {
             return Box::new(value);
         }
 
-        let ptr = mem::replace(&mut self.0, ptr::null_mut());
         unsafe {
+            let ptr = self.0.as_ptr();
+            mem::forget(self);
             ptr::write(ptr, value);
             Box::from_raw(ptr)
         }
@@ -20,15 +30,16 @@ impl<T> BoxAllocation<T> {
 
 impl<T> Drop for BoxAllocation<T> {
     fn drop(&mut self) {
-        if !self.0.is_null() {
-            let layout = alloc::Layout::new::<T>();
-            unsafe {
-                alloc::dealloc(self.0 as *mut u8, layout);
-            }
+        if mem::size_of::<T>() == 0 {
+            return;
+        }
+
+        let layout = alloc::Layout::new::<T>();
+        unsafe {
+            alloc::dealloc(self.0.as_ptr() as *mut u8, layout);
         }
     }
 }
-
 
 /// Helper trait for a `Box` type that allocates up-front.
 pub trait BoxHelper<T> {
@@ -39,12 +50,13 @@ pub trait BoxHelper<T> {
 impl<T> BoxHelper<T> for Box<T> {
     fn alloc() -> BoxAllocation<T> {
         if mem::size_of::<T>() == 0 {
-            return BoxAllocation(ptr::null_mut());
+            return BoxAllocation(NonNull::dangling());
         }
 
         let layout = alloc::Layout::new::<T>();
-        BoxAllocation(unsafe {
-            alloc::alloc(layout) as *mut T
-        })
+        BoxAllocation(
+            NonNull::new(unsafe { alloc::alloc(layout) as *mut T })
+                .unwrap_or_else(|| alloc::handle_alloc_error(layout)), // oom
+        )
     }
 }
