@@ -1,5 +1,8 @@
 # Change Log
 
+## v0.1.5 (01-06-2020)
+  - switch license to MIT + Apache 2.0
+
 ## v0.1.4 (24-06-2019)
   - `BoxHelper`: replaced nullable pointer with NonNull
 
