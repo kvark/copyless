@@ -35,8 +35,12 @@ impl<'a, T> VecEntry<'a, T> {
     #[inline(always)]
     pub fn set(self, value: T) {
         match self {
-            VecEntry::Vacant(alloc) => { alloc.init(value); }
-            VecEntry::Occupied(slot) => { *slot = value; }
+            VecEntry::Vacant(alloc) => {
+                alloc.init(value);
+            }
+            VecEntry::Occupied(slot) => {
+                *slot = value;
+            }
         }
     }
 }
@@ -56,17 +60,12 @@ impl<T> VecHelper<T> for Vec<T> {
         if self.capacity() == index {
             self.reserve(1);
         }
-        VecAllocation {
-            vec: self,
-            index,
-        }
+        VecAllocation { vec: self, index }
     }
 
     fn entry(&mut self, index: usize) -> VecEntry<T> {
         if index < self.len() {
-            VecEntry::Occupied(unsafe {
-                self.get_unchecked_mut(index)
-            })
+            VecEntry::Occupied(unsafe { self.get_unchecked_mut(index) })
         } else {
             assert_eq!(index, self.len());
             VecEntry::Vacant(self.alloc())
