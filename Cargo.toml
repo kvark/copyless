@@ -1,9 +1,9 @@
 [package]
 name = "copyless"
 description = "Ways to eliminate memcpy calls when using the standard library."
-version = "0.1.4"
+version = "0.1.5"
 authors = ["Dzmitry Malyshau <kvarkus@gmail.com>"]
-license = "MPL-2.0"
+license = "MIT OR Apache-2.0"
 edition = "2018"
 homepage = "https://github.com/kvark/copyless"
 repository = "https://github.com/kvark/copyless"
