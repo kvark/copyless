@@ -1,4 +1,4 @@
-use std::ptr;
+use {alloc::vec::Vec, core::ptr};
 
 /// A typesafe helper that separates new value construction from
 /// vector growing, allowing LLVM to ideally construct the element in place.
