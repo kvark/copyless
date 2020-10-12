@@ -1,6 +1,12 @@
-use std::{
-    alloc, mem,
-    ptr::{self, NonNull},
+use {
+    alloc::{
+        alloc::{alloc, dealloc, handle_alloc_error, Layout},
+        boxed::Box,
+    },
+    core::{
+        mem,
+        ptr::{self, NonNull},
+    },
 };
 
 /// A typesafe helper that stores the allocated pointer without the data initialized.
@@ -34,9 +40,9 @@ impl<T> Drop for BoxAllocation<T> {
             return;
         }
 
-        let layout = alloc::Layout::new::<T>();
+        let layout = Layout::new::<T>();
         unsafe {
-            alloc::dealloc(self.0.as_ptr() as *mut u8, layout);
+            dealloc(self.0.as_ptr() as *mut u8, layout);
         }
     }
 }
@@ -53,10 +59,10 @@ impl<T> BoxHelper<T> for Box<T> {
             return BoxAllocation(NonNull::dangling());
         }
 
-        let layout = alloc::Layout::new::<T>();
+        let layout = Layout::new::<T>();
         BoxAllocation(
-            NonNull::new(unsafe { alloc::alloc(layout) as *mut T })
-                .unwrap_or_else(|| alloc::handle_alloc_error(layout)), // oom
+            NonNull::new(unsafe { alloc(layout) as *mut T })
+                .unwrap_or_else(|| handle_alloc_error(layout)), // oom
         )
     }
 }
