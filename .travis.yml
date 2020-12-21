@@ -1,4 +1,7 @@
 language: rust
+arch:
+  - amd64
+  - ppc64le
 rust:
   - stable
   - nightly
