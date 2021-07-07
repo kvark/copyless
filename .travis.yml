@@ -16,4 +16,6 @@ before_install:
   - if [[ $TRAVIS_RUST_VERSION == "nightly" && $TRAVIS_BRANCH == "staging" ]]; then exit; fi
 
 script:
-  - cargo test
+  - cargo check
+  - cargo test --release
+  # check out memcpy-find and scan the output on a few samples
