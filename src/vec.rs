@@ -77,6 +77,7 @@ impl<T> VecHelper<T> for Vec<T> {
 #[cfg(not(debug_assertions))]
 #[test]
 fn test_zero_copy() {
+    use alloc::vec;
     union Foo {
         small: u8,
         big: [f32; 10],
