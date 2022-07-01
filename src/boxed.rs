@@ -25,9 +25,9 @@ impl<T> BoxAllocation<T> {
             return Box::new(value);
         }
 
+        let ptr = self.0.as_ptr();
+        mem::forget(self);
         unsafe {
-            let ptr = self.0.as_ptr();
-            mem::forget(self);
             ptr::write(ptr, value);
             Box::from_raw(ptr)
         }
